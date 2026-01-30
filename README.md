@@ -38,7 +38,7 @@ cd cloudcix-terraform
 Copy the template environment file and configure your CloudCIX API credentials:
 
 ```bash
-cp cloudcix.template.env cloudcix.env
+cp cloudcix.env.template cloudcix.env
 ```
 
 Edit `cloudcix.env` with your CloudCIX credentials:
