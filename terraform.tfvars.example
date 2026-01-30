@@ -1,0 +1,156 @@
+# ========================================
+# CloudCIX Terraform Configuration Template
+# ========================================
+# This is a template file for terraform.tfvars with detailed explanations for each parameter.
+# Copy this file to terraform.tfvars and fill in your actual values.
+
+# ----------------------------------------
+# CloudCIX API Settings
+# ----------------------------------------
+
+# Path to your CloudCIX API credentials file
+# This file should contain your CloudCIX API username, password, API key, and API URL
+# Create this file from cloudcix.template.env
+settings_file = "cloudcix.env"
+
+# ----------------------------------------
+# Region Configuration
+# ----------------------------------------
+
+# The CloudCIX region ID where resources will be deployed
+# You can find available region IDs through the CloudCIX portal
+# Example: 1, 2, 3, etc.
+region_id = <YOUR_REGION_ID>
+
+# ----------------------------------------
+# Project Configuration
+# ----------------------------------------
+
+# Name for your CloudCIX project
+# This is a logical grouping for your infrastructure resources
+# Use a descriptive name to identify this project
+project_name = "My First Project"
+
+# ----------------------------------------
+# Network Configuration
+# ----------------------------------------
+
+# CIDR block for your network
+# Defines the IP address range for your private network
+# Must be in CIDR notation (e.g., 10.0.0.0/24 provides 256 IPs)
+# Common private ranges: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16
+cidr = "10.0.0.0/24"
+
+# Name for your network
+# Choose a descriptive name to identify this network
+network_name = "My First Network"
+
+# DNS nameservers for your network
+# Comma-separated list of DNS server IPs (both IPv4 and IPv6 supported)
+# These servers will be used by instances for DNS resolution
+# Example includes: Quad9, CloudCIX, Google DNS, Cloudflare
+nameservers = "9.9.9.9, 91.103.0.1, 8.8.8.8, 1.1.1.1, 2001:4860:4860::8888, 2620:fe::fe, 2606:4700:4700::1111"
+
+# ----------------------------------------
+# Instance Configuration
+# ----------------------------------------
+
+# Name for your compute instance
+# This will be the identifier for your virtual machine or container
+instance_name = "My First Instance"
+
+# Instance type
+# Options:
+#   - "virtual-machine": Full VM with dedicated resources
+#   - "container": Lightweight containerized instance
+instance_type = "virtual-machine"
+
+# Hypervisor type for the instance
+# Options:
+#   - "lxd": Linux containers (LXD)
+#   - Other hypervisors as supported by your CloudCIX region
+hypervisor_type = "lxd"
+
+# ----------------------------------------
+# Cloud-init User Data
+# ----------------------------------------
+
+# Cloud-init configuration for instance initialization
+# This YAML configuration runs on first boot to:
+#   - Create users and set passwords
+#   - Configure SSH keys
+#   - Install packages
+#   - Run custom scripts
+# 
+# IMPORTANT: Replace the following placeholders:
+#   - <YOUR_HASHED_PASSWORD>: Generate with: `openssl passwd -6 password123`
+#   - <YOUR_SSH_KEY>: Your public SSH key (from ~/.ssh/id_ed25519.pub or similar)
+#
+# The example below creates an 'administrator' user with sudo access
+userdata = "#cloud-config\nusers:\n  - name: administrator\n    groups: sudo\n    shell: /bin/bash\n    lock_passwd: false\n    passwd: <YOUR_HASHED_PASSWORD>\n    ssh_authorized_keys:\n      - ssh-ed25519 <YOUR_SSH_KEY>\nchpasswd:\n  expire: false\nssh_pwauth: true\n"
+
+# ----------------------------------------
+# Instance Resource Specifications
+# ----------------------------------------
+
+# Hardware specifications for your instance
+# Each resource has an SKU (stock keeping unit) and quantity
+# Available SKUs may vary by region - check CloudCIX documentation or portal
+instance_specs = {
+  # CPU Configuration
+  cpu = {
+    sku      = "vCPU_001"  # SKU for virtual CPU cores
+    quantity = 2           # Number of CPU cores (e.g., 1, 2, 4, 8)
+  }
+
+  # RAM Configuration
+  ram = {
+    sku      = "RAM_001"   # SKU for RAM
+    quantity = 2           # Amount of RAM in GB (e.g., 1, 2, 4, 8, 16)
+  }
+
+  # Storage Configuration
+  storage = {
+    sku      = "SSD_001"   # SKU for storage type (SSD_001 for SSD, HDD_001 for HDD, etc.)
+    quantity = 20          # Storage size in GB (e.g., 20, 40, 100, 500)
+  }
+
+  # Operating System Image
+  image = {
+    sku      = "SURF001"   # SKU for OS image (e.g., SURF001, UBUNTU2404)
+    quantity = 1           # Always 1 for images
+  }
+}
+
+# ----------------------------------------
+# Firewall Rules
+# ----------------------------------------
+
+# List of firewall rules to control network traffic
+# Each rule follows this syntax:
+#   "{direction} {protocol} {port_start} {port_end} {source_cidr} {destination_cidr}"
+#
+# Parameters:
+#   - direction: "in" (inbound) or "out" (outbound)
+#   - protocol: "tcp" or "udp"
+#   - port_start: Starting port number (0-65535)
+#   - port_end: Ending port number (0-65535, must be >= port_start)
+#   - source_cidr: Source IP address or CIDR block
+#   - destination_cidr: Destination IP address or CIDR block
+#
+# Examples:
+#   - Allow SSH from specific IP: "in tcp 22 22 203.0.113.0/24 10.0.0.0/24"
+#   - Allow HTTP from anywhere: "in tcp 80 80 0.0.0.0/0 10.0.0.0/24"
+#   - Allow HTTPS from anywhere: "in tcp 443 443 0.0.0.0/0 10.0.0.0/24"
+#   - Allow port range: "in tcp 8000 8100 0.0.0.0/0 10.0.0.0/24"
+#   - Allow outbound DNS: "out udp 53 53 10.0.0.0/24 0.0.0.0/0"
+firewall_rules = [
+  # Allow SSH (port 22) from a specific network
+  # Replace 91.103.3.36/24 with your trusted IP range or use 0.0.0.0/0 for anywhere (not recommended)
+  "in tcp 22 22 91.103.3.36/24 10.0.0.0/24",
+  
+  # Add more rules as needed:
+  # "in tcp 80 80 0.0.0.0/0 10.0.0.0/24",     # Allow HTTP from anywhere
+  # "in tcp 443 443 0.0.0.0/0 10.0.0.0/24",   # Allow HTTPS from anywhere
+  # "in tcp 3389 3389 203.0.113.0/24 10.0.0.0/24",  # Allow RDP from specific network
+]
