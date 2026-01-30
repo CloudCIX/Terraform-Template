@@ -29,7 +29,7 @@ This Terraform configuration allows you to provision and manage CloudCIX infrast
 ### 1. Clone or Download the Configuration
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/CloudCIX/Terraform-Template.git
 cd cloudcix-terraform
 ```
 
@@ -97,7 +97,7 @@ instance_specs = {
     quantity = 32
   }
   image = {
-    sku      = "UBUNTU2404"
+    sku      = "SURF001"
     quantity = 1
   }
 }

@@ -29,3 +29,4 @@ override.tf.json
 .terraformrc
 terraform.rc
 cloudcix-terraform/cloudcix.env
+cloudcix-terraform/.terraform.lock.hcl
