@@ -195,7 +195,7 @@ terraform destroy
 | `nameservers` | string | Comma-separated list of DNS servers |
 | `instance_name` | string | Name for the compute instance |
 | `instance_type` | string | Type of instance (e.g., "virtual-machine") |
-| `hypervisor_type` | string | Hypervisor type (e.g., "lxd", "kvm") |
+| `hypervisor_type` | string | Hypervisor type (e.g., "lxd") |
 | `userdata` | string | Cloud-init configuration |
 | `instance_specs` | object | Instance specifications (CPU, RAM, storage, image) |
 | `firewall_rules` | list(string) | List of firewall rules |
