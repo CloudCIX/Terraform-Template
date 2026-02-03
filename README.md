@@ -56,7 +56,7 @@ CLOUDCIX_API_V2_URL=https://api.cloudcix.com/api/v2
 terraform init
 ```
 
-This will download the CloudCIX provider (version ~> 0.10.8) from the Terraform Registry.
+This will download the CloudCIX provider (version ~> 0.11.0) from the Terraform Registry.
 
 ## Configuration
 
