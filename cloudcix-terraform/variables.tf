@@ -75,3 +75,27 @@ variable "firewall_rules" {
     error_message = "Port range start and end must be valid numbers between 0-65535, and start must be <= end"
   }
 }
+
+variable "storage_volume_name" {
+  type        = string
+  description = "Name of the storage volume"
+}
+
+variable "storage_volume_type" {
+  type        = string
+  description = "Type of storage volume (e.g., cephfs)"
+  default     = "cephfs"
+}
+
+variable "storage_volume_specs" {
+  type = object({
+    sku      = string
+    quantity = number
+  })
+  description = "Storage volume specifications"
+}
+
+variable "storage_volume_mount_path" {
+  type        = string
+  description = "Mount path for the storage volume"
+}
