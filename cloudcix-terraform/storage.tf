@@ -11,7 +11,7 @@ resource "cloudcix_storage_volume" "example_storage_volume" {
   
   metadata = {
     attach_instance_ids = [cloudcix_compute_instance.compute_instance.id]
-    mount_path          = var.storage_volume_mount_path
+    #mount_path          = var.storage_volume_mount_path
   }
 
   depends_on = [

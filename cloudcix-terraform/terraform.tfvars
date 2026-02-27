@@ -26,7 +26,7 @@ instance_specs = {
 
   storage = {
     sku      = "SSD_001"
-    quantity = 20
+    quantity = 16
   }
 
   image = {
@@ -38,15 +38,13 @@ instance_specs = {
 firewall_rules = [
   # Allow SSH (port 22) from anywhere
   "in tcp 22 22 91.103.3.36/24 10.0.0.0/24",
+  "in tcp 80 80 0.0.0.0/0 10.0.0.0/24",
+  "in tcp 443 443 0.0.0.0/0 10.0.0.0/24"
 ]
 
-storage_volume_name = "surf"
-storage_volume_type = "cephfs"
-
+storage_volume_name = "block"
+storage_volume_type = "cephrbd"
 storage_volume_specs = {
   sku      = "CEPH_001"
-  #use "CEPH_001" for HDD or "CEPH_002" for SSD
-  quantity = 10
+  quantity = 5
 }
-
-storage_volume_mount_path = "/mnt/surf"

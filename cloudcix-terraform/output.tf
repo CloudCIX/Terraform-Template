@@ -21,3 +21,8 @@ output "private_subnet" {
 output "private_ip" {
   value = cloudcix_compute_instance.compute_instance.interfaces[0].ipv4_addresses[0].address
 }
+
+# Storage Volume ID
+output "storage_volume_id" {
+  value = cloudcix_storage_volume.example_storage_volume.id
+}
