@@ -9,8 +9,8 @@ output "instance_id" {
 }
 
 # Public IP of Instance
-output public_ip {
-    value = cloudcix_compute_instance.compute_instance.interfaces[0].ipv4_addresses[0].public_ip
+output "public_ip" {
+  value = cloudcix_compute_instance.compute_instance.interfaces[0].ipv4_addresses[0].public_ip
 }
 
 output "private_subnet" {

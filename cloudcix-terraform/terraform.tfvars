@@ -3,6 +3,7 @@ settings_file = "cloudcix.env"
 region_id = <YOUR_REGION_ID>
 
 project_name = "My First Project"
+project_note = "Optional description of this project"
 cidr          = "10.0.0.0/24"
 network_name  = "My First Network"
 nameservers   = "9.9.9.9, 91.103.0.1, 8.8.8.8, 1.1.1.1, 2001:4860:4860::8888, 2620:fe::fe, 2606:4700:4700::1111"
@@ -36,7 +37,7 @@ instance_specs = {
 }
 
 firewall_rules = [
-  # Allow SSH (port 22) from anywhere
+  # Allow SSH (port 22) from trusted source range
   "in tcp 22 22 91.103.3.36/24 10.0.0.0/24",
   "in tcp 80 80 0.0.0.0/0 10.0.0.0/24",
   "in tcp 443 443 0.0.0.0/0 10.0.0.0/24"

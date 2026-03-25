@@ -98,4 +98,11 @@ variable "storage_volume_specs" {
 variable "storage_volume_mount_path" {
   type        = string
   description = "Mount path for the storage volume"
+  default     = null
+}
+
+variable "project_note" {
+  type        = string
+  description = "Optional note to attach to the project"
+  default     = ""
 }
