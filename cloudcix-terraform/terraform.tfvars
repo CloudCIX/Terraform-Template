@@ -45,7 +45,9 @@ firewall_rules = [
 
 storage_volume_name = "ceph"
 storage_volume_type = "cephfs"
+# options: "cephfs" or "cephrbd"
 storage_volume_mount_path = "/mnt/ceph"
+# storage_volume_mount_path only used if storage_volume_type is cephfs
 storage_volume_specs = {
   sku      = "CEPH_001"
   quantity = 5
