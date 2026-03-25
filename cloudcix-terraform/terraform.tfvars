@@ -43,9 +43,11 @@ firewall_rules = [
   "in tcp 443 443 0.0.0.0/0 10.0.0.0/24"
 ]
 
-storage_volume_name = "block"
-storage_volume_type = "cephrbd"
+storage_volume_name = "ceph"
+storage_volume_type = "cephfs"
+storage_volume_mount_path = "/mnt/ceph"
 storage_volume_specs = {
   sku      = "CEPH_001"
   quantity = 5
 }
+# CEPH_001 for HDD, CEPH_002 for SSD
