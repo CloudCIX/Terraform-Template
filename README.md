@@ -33,21 +33,32 @@ git clone https://github.com/CloudCIX/Terraform-Template.git
 cd cloudcix-terraform
 ```
 
-### 2. Set Up API Credentials
+### 2. Configure Credentials
 
-Copy the template environment file and configure your CloudCIX API credentials:
+Copy the example variables file and fill in your CloudCIX credentials:
 
 ```bash
-cp cloudcix.env.template cloudcix.env
+cp terraform.tfvars.example terraform.tfvars
 ```
 
-Edit `cloudcix.env` with your CloudCIX credentials:
+Edit `terraform.tfvars` with your credentials:
+
+```hcl
+cloudcix_api_url  = "https://api.cloudcix.com/"
+cloudcix_username = "user@example.com"
+cloudcix_password = "your-password"
+cloudcix_api_key  = "your-api-key"
+region_id         = 1
+```
+
+Credentials can also be supplied via environment variables instead of `terraform.tfvars`:
 
 ```bash
-CLOUDCIX_API_USERNAME=your_username
-CLOUDCIX_API_PASSWORD=your_password
-CLOUDCIX_API_KEY=your_api_key
-CLOUDCIX_API_V2_URL=https://api.cloudcix.com/api/v2
+export CLOUDCIX_API_URL=https://api.cloudcix.com/
+export CLOUDCIX_API_USERNAME=user@example.com
+export CLOUDCIX_API_PASSWORD=your-password
+export CLOUDCIX_API_KEY=your-api-key
+export CLOUDCIX_REGION_ID=1
 ```
 
 ### 3. Initialize Terraform
@@ -65,8 +76,11 @@ This will download the CloudCIX provider (version ~> 0.14.0) from the Terraform 
 Edit `terraform.tfvars` to customize your infrastructure:
 
 ```hcl
-settings_file = "cloudcix.env"
-region_id     = <Your_Region_ID>
+cloudcix_api_url  = "https://api.cloudcix.com/"
+cloudcix_username = "user@example.com"
+cloudcix_password = "your-password"
+cloudcix_api_key  = "your-api-key"
+region_id         = <Your_Region_ID>
 project_name  = "my-project"
 
 # Network Configuration
@@ -188,7 +202,9 @@ terraform destroy
 
 | Variable | Type | Description |
 |----------|------|-------------|
-| `settings_file` | string | Path to CloudCIX credentials file |
+| `cloudcix_username` | string | CloudCIX username (email) |
+| `cloudcix_password` | string | CloudCIX password |
+| `cloudcix_api_key` | string | CloudCIX API key |
 | `region_id` | number | CloudCIX region ID |
 | `project_name` | string | Name for the CloudCIX project |
 | `network_name` | string | Name for the virtual network |
@@ -204,6 +220,7 @@ terraform destroy
 
 | Variable | Type | Default | Description |
 |----------|------|---------|-------------|
+| `cloudcix_api_url` | string | "https://api.cloudcix.com/" | CloudCIX API base URL |
 | `cidr` | string | "10.10.10.0/24" | IPv4 CIDR for the private network |
 
 ### Instance Specifications Object
@@ -335,10 +352,10 @@ Error: Failed to authenticate with CloudCIX API
 ```
 
 **Solution:**
-- Verify credentials in `cloudcix.env`
-- Check API URL is correct
-- Ensure API key is active
-- Verify network connectivity to CloudCIX API
+- Verify `cloudcix_username`, `cloudcix_password`, and `cloudcix_api_key` in `terraform.tfvars`
+- Check `cloudcix_api_url` is correct
+- Ensure the API key is active
+- Verify network connectivity to the CloudCIX API
 
 #### 2. Region Not Found
 
@@ -438,5 +455,5 @@ terraform apply
 ---
 
 **Version:** 1.0.0  
-**Last Updated:** January 2026  
-**Provider Version:** ~> 0.10.8
+**Last Updated:** May 2026  
+**Provider Version:** ~> 0.14.0

@@ -1,4 +1,21 @@
-variable "settings_file" {}
+variable "cloudcix_api_url" {
+  description = "The CloudCIX API base URL."
+  default     = "https://api.cloudcix.com/"
+}
+
+variable "cloudcix_username" {
+  description = "The CloudCIX username (email)."
+}
+
+variable "cloudcix_password" {
+  description = "The CloudCIX password."
+  sensitive   = true
+}
+
+variable "cloudcix_api_key" {
+  description = "The CloudCIX API key."
+  sensitive   = true
+}
 
 variable "region_id" {}
 

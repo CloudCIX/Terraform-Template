@@ -1,7 +1,8 @@
-settings_file = "cloudcix.env"
-
-region_id = <YOUR_REGION_ID>
-
+cloudcix_api_url  = "https://api.cloudcix.com/"
+cloudcix_username = "example@cix.ie"
+cloudcix_password = "My_Secure_Password"
+cloudcix_api_key  = "My_API_Key"
+region_id         = 210514
 project_name = "My First Project"
 project_note = "Optional description of this project"
 cidr          = "10.0.0.0/24"
