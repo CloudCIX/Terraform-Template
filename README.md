@@ -67,7 +67,7 @@ export CLOUDCIX_REGION_ID=1
 terraform init
 ```
 
-This will download the CloudCIX provider (version ~> 0.14.0) from the Terraform Registry.
+This will download the CloudCIX provider (version ~> 0.15.0) from the Terraform Registry.
 
 ## Configuration
 
