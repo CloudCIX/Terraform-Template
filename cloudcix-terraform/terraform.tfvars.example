@@ -154,3 +154,33 @@ firewall_rules = [
   # "in tcp 443 443 0.0.0.0/0 10.0.0.0/24",   # Allow HTTPS from anywhere
   # "in tcp 3389 3389 203.0.113.0/24 10.0.0.0/24",  # Allow RDP from specific network
 ]
+
+# ----------------------------------------
+# Project Notes (Optional)
+# ----------------------------------------
+
+# An optional note or description to attach to the project
+project_note = ""
+
+# ----------------------------------------
+# Storage Volume Configuration
+# ----------------------------------------
+
+# Name for the storage volume
+storage_volume_name = "my-volume"
+
+# Type of storage volume
+# Options:
+#   - "cephfs":  Shared file system storage (supports mount_path)
+#   - "cephrbd": Block storage device (no mount_path required)
+storage_volume_type = "cephfs"
+
+# Storage volume specifications
+storage_volume_specs = {
+  sku      = "CEPH_001"  # CEPH_001 for HDD, CEPH_002 for SSD
+  quantity = 5           # Size in GB
+}
+
+# Mount path for the volume (only used when storage_volume_type is "cephfs")
+# Set to null to skip mounting
+storage_volume_mount_path = "/mnt/data"

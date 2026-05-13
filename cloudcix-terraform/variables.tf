@@ -83,7 +83,7 @@ variable "storage_volume_name" {
 
 variable "storage_volume_type" {
   type        = string
-  description = "Type of storage volume (e.g., cephfs)"
+  description = "Type of storage volume: 'cephfs' for file system storage or 'cephrbd' for block storage"
   default     = "cephfs"
 }
 

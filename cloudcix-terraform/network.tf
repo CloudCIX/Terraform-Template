@@ -20,7 +20,6 @@ resource "cloudcix_network_router" "example_network_router" {
   metadata = {
     nat = true
   }
-  name = "${var.project_name} Router"
   networks = [
     {
       ipv4 = var.cidr
@@ -36,7 +35,6 @@ resource "cloudcix_network_firewall" "example_network_firewall" {
     cloudcix_network_router.example_network_router
   ]
   project_id = cloudcix_project.example_project.id
-  name       = "${var.project_name} Firewall"
   rules      = local.firewall_rules
   type       = "project"
 }
