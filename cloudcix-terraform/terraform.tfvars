@@ -13,7 +13,19 @@ instance_name = "My First Instance"
 instance_type   = "virtual-machine"
 hypervisor_type = "lxd"
 
-userdata = "#cloud-config\nusers:\n  - name: administrator\n    groups: sudo\n    shell: /bin/bash\n    lock_passwd: false\n    passwd: <YOUR_HASHED_PASSWORD>\n    ssh_authorized_keys:\n      - ssh-ed25519 <YOUR_SSH_KEY>\nchpasswd:\n  expire: false\nssh_pwauth: true\n"
+userdata = <<-EOF
+#cloud-config
+users:
+  - name: administrator
+    groups: sudo
+    shell: /bin/bash
+    lock_passwd: false
+    passwd: <YOUR_HASHED_PASSWORD>
+    ssh_authorized_keys: <YOUR_SSH_KEY>
+chpasswd:
+  expire: false
+ssh_pwauth: true
+EOF
 
 instance_specs = {
   cpu = {
