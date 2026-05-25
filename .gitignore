@@ -9,6 +9,10 @@
 crash.log
 crash.*.log
 
+# terraform.tfvars contains credentials — do not commit
+# Use terraform.tfvars.example as the template
+terraform.tfvars
+
 # Ignore override files as they are usually used to override resources locally and so
 # are not checked in
 override.tf

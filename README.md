@@ -67,7 +67,7 @@ export CLOUDCIX_REGION_ID=1
 terraform init
 ```
 
-This will download the CloudCIX provider (version ~> 0.21.0) from the Terraform Registry.
+This will download the CloudCIX provider (version ~> 0.22.1) from the Terraform Registry.
 
 ## Configuration
 
@@ -94,11 +94,26 @@ instance_type   = "virtual-machine"
 hypervisor_type = "lxd"
 
 # SSH Key
-ssh_key_name   = "my-laptop-key"
+# Option A: provide your own public key
+ssh_key_name   = "my-key"
 ssh_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA..."
 
-# Cloud-init user data (SSH key injected automatically via ssh_key_names)
-userdata = "#cloud-config\nusers:\n  - name: administrator\n    groups: sudo\n    shell: /bin/bash\n    lock_passwd: false\n    passwd: $2a$12$...\n"
+# Option B: omit ssh_public_key — API auto-generates, private key in output
+# ssh_public_key = null
+
+# Cloud-init (SSH key injected automatically; password optional if using SSH key)
+userdata = <<-EOF
+#cloud-config
+users:
+  - name: administrator
+    groups: sudo
+    shell: /bin/bash
+    lock_passwd: false
+    passwd: <HASHED_PASSWORD>  # generate with: openssl passwd -6 yourpassword
+chpasswd:
+  expire: false
+ssh_pwauth: true
+EOF
 
 # Instance Specifications
 instance_specs = {
@@ -221,25 +236,25 @@ terraform destroy
 | `network_name` | string | Name for the virtual network |
 | `nameservers` | string | Comma-separated list of DNS servers |
 | `instance_name` | string | Name for the compute instance |
-| `instance_type` | string | Type of instance (e.g., "virtual-machine") |
-| `hypervisor_type` | string | Hypervisor type (e.g., "lxd") |
-| `userdata` | string | Cloud-init configuration |
-| `instance_specs` | object | Instance specifications (CPU, RAM, storage, image) |
+| `instance_type` | string | `"virtual-machine"` or `"container"` |
+| `hypervisor_type` | string | `"lxd"` (Linux) or `"hyperv"` (Windows) |
+| `userdata` | string | Cloud-init configuration (must start with `#cloud-config`) |
+| `instance_specs` | object | CPU, RAM, storage, and image SKUs |
 | `firewall_rules` | list(string) | List of firewall rules |
 | `ssh_key_name` | string | Name to register the SSH key under in CloudCIX |
-| `ssh_public_key` | string | SSH public key to register (e.g. contents of `~/.ssh/id_ed25519.pub`) |
-| `storage_volume_name` | string | Name for the storage volume |
-| `storage_volume_specs` | object | Storage volume specifications (SKU and quantity in GB) |
 
 ### Optional Variables
 
 | Variable | Type | Default | Description |
 |----------|------|---------|-------------|
-| `cloudcix_api_url` | string | "https://api.cloudcix.com/" | CloudCIX API base URL |
-| `cidr` | string | "10.10.10.0/24" | IPv4 CIDR for the private network |
-| `project_note` | string | "" | Optional description for the project |
-| `storage_volume_type` | string | "cephfs" | Storage type: `cephfs` or `cephrbd` |
-| `storage_volume_mount_path` | string | null | Mount path (cephfs only) |
+| `cloudcix_api_url` | string | `"https://api.cloudcix.com/"` | CloudCIX API base URL |
+| `cidr` | string | `"10.0.0.0/24"` | IPv4 CIDR for the private network |
+| `project_note` | string | `""` | Optional description for the project |
+| `ssh_public_key` | string | `null` | SSH public key to register. If omitted, the API auto-generates an Ed25519 keypair and returns the private key once via the `ssh_private_key` output. |
+| `storage_volume_name` | string | — | Name for the storage volume (uncomment `storage.tf` to use) |
+| `storage_volume_type` | string | `"cephfs"` | `"cephfs"` or `"cephrbd"` |
+| `storage_volume_specs` | object | — | Storage SKU and size in GB |
+| `storage_volume_mount_path` | string | `null` | Mount path (cephfs only) |
 
 ### Instance Specifications Object
 
@@ -278,16 +293,17 @@ instance_specs = {
 |--------|-------------|
 | `project_id` | ID of the created CloudCIX project |
 | `instance_id` | ID of the created compute instance |
-| `public_ip` | Public IPv4 address of the instance |
+| `public_ip` | Public IPv4 address (populated once instance reaches running state) |
 | `private_ip` | Private IPv4 address of the instance |
 | `private_subnet` | CIDR of the private network |
 | `ssh_key_id` | ID of the registered SSH key |
-| `storage_volume_id` | ID of the created storage volume |
+| `ssh_private_key` | (**sensitive**) Private key — only set when `ssh_public_key` is omitted and the API auto-generates the keypair. Retrieve with: `terraform output -raw ssh_private_key` |
 
 Access outputs with:
 ```bash
 terraform output public_ip
-terraform output -json  # All outputs in JSON format
+terraform output -raw ssh_private_key  # retrieve auto-generated private key
+terraform output -json                 # all outputs as JSON
 ```
 
 ## Firewall Rules
@@ -476,6 +492,6 @@ terraform apply
 
 ---
 
-**Version:** 1.0.0  
+**Version:** 2.0.0  
 **Last Updated:** May 2026  
-**Provider Version:** ~> 0.14.0
+**Provider Version:** ~> 0.22.1

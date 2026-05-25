@@ -1,17 +1,17 @@
 # ========================================
 # CloudCIX Terraform Configuration Template
 # ========================================
-# This is a template file for terraform.tfvars with detailed explanations for each parameter.
-# Copy this file to terraform.tfvars and fill in your actual values.
+# Copy this file to terraform.tfvars and fill in your values.
+# terraform.tfvars is gitignored — your credentials stay local.
 
 # ----------------------------------------
-# CloudCIX API Settings
+# CloudCIX API Credentials
 # ----------------------------------------
 
-# Path to your CloudCIX API credentials file
-# This file should contain your CloudCIX API username, password, API key, and API URL
-# Create this file from cloudcix.template.env
-settings_file = "cloudcix.env"
+cloudcix_api_url  = "https://api.cloudcix.com/"
+cloudcix_username = "your-email@example.com"
+cloudcix_password = "<YOUR_PASSWORD>"
+cloudcix_api_key  = "<YOUR_API_KEY>"
 
 # ----------------------------------------
 # Region Configuration
@@ -192,20 +192,15 @@ project_note = ""
 # ----------------------------------------
 
 # Name for the storage volume
-storage_volume_name = "my-volume"
+# ----------------------------------------
+# Storage Volume Configuration (optional)
+# ----------------------------------------
+# Uncomment variables.tf storage block and storage.tf to use.
 
-# Type of storage volume
-# Options:
-#   - "cephfs":  Shared file system storage (supports mount_path)
-#   - "cephrbd": Block storage device (no mount_path required)
-storage_volume_type = "cephfs"
-
-# Storage volume specifications
-storage_volume_specs = {
-  sku      = "CEPH_001"  # CEPH_001 for HDD, CEPH_002 for SSD
-  quantity = 5           # Size in GB
-}
-
-# Mount path for the volume (only used when storage_volume_type is "cephfs")
-# Set to null to skip mounting
-storage_volume_mount_path = "/mnt/data"
+# storage_volume_name = "my-volume"
+# storage_volume_type = "cephfs"  # or "cephrbd" for block storage
+# storage_volume_mount_path = "/mnt/data"  # cephfs only
+# storage_volume_specs = {
+#   sku      = "CEPH_002"  # CEPH_001 HDD, CEPH_002 SSD
+#   quantity = 20          # size in GB
+# }

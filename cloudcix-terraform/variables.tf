@@ -17,29 +17,51 @@ variable "cloudcix_api_key" {
   sensitive   = true
 }
 
-variable "region_id" {}
+variable "region_id" {
+  type        = number
+  description = "The CloudCIX region ID where resources will be deployed."
+}
 
-variable "project_name" {}
+variable "project_name" {
+  type        = string
+  description = "Name for the CloudCIX project."
+}
 
 variable "cidr" {
-  type    = string
-  default = "10.10.10.0/24"
+  type        = string
+  default     = "10.0.0.1/24"
+  description = "IPv4 CIDR block for the private network."
 }
 
 variable "nameservers" {
   type        = string
-  description = "A comma sepeparated list of nameservers to use"
+  description = "Comma-separated list of DNS server IPs for the network."
 }
 
-variable "network_name" {}
+variable "network_name" {
+  type        = string
+  description = "Name for the virtual network."
+}
 
-variable "instance_name" {}
+variable "instance_name" {
+  type        = string
+  description = "Name for the compute instance."
+}
 
-variable "instance_type" {}
+variable "instance_type" {
+  type        = string
+  description = "Instance type: \"virtual-machine\" or \"container\"."
+}
 
-variable "hypervisor_type" {}
+variable "hypervisor_type" {
+  type        = string
+  description = "Hypervisor type: \"lxd\" (Linux) or \"hyperv\" (Windows)."
+}
 
-variable "userdata" {}
+variable "userdata" {
+  type        = string
+  description = "Cloud-init configuration (must start with #cloud-config for SSH key injection to work)."
+}
 
 variable "instance_specs" {
   type = object({
@@ -131,5 +153,6 @@ variable "ssh_key_name" {
 
 variable "ssh_public_key" {
   type        = string
-  description = "SSH public key to register with CloudCIX. The API injects it into the instance via ssh_key_names (e.g. contents of ~/.ssh/id_ed25519.pub)"
+  default     = null
+  description = "Optional. SSH public key to register (e.g. contents of ~/.ssh/id_ed25519.pub). If omitted, the API auto-generates an Ed25519 keypair and the private key is output once via ssh_private_key."
 }
