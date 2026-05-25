@@ -13,6 +13,11 @@ instance_name = "My First Instance"
 instance_type   = "virtual-machine"
 hypervisor_type = "lxd"
 
+# SSH Key — registered with CloudCIX; public key injected into the instance by the API via ssh_key_names
+ssh_key_name   = "my-laptop-key"
+ssh_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA..."
+
+# passwd/ssh_pwauth are optional when using an SSH key — omit them to disable password auth entirely
 userdata = <<-EOF
 #cloud-config
 users:
@@ -20,8 +25,7 @@ users:
     groups: sudo
     shell: /bin/bash
     lock_passwd: false
-    passwd: <YOUR_HASHED_PASSWORD>
-    ssh_authorized_keys: <YOUR_SSH_KEY>
+    passwd: <YOUR_HASHED_PASSWORD>  # optional if using SSH key; generate with: openssl passwd -6 yourpassword
 chpasswd:
   expire: false
 ssh_pwauth: true

@@ -67,7 +67,7 @@ export CLOUDCIX_REGION_ID=1
 terraform init
 ```
 
-This will download the CloudCIX provider (version ~> 0.15.0) from the Terraform Registry.
+This will download the CloudCIX provider (version ~> 0.21.0) from the Terraform Registry.
 
 ## Configuration
 
@@ -93,7 +93,11 @@ instance_name   = "my-instance"
 instance_type   = "virtual-machine"
 hypervisor_type = "lxd"
 
-# Cloud-init user data
+# SSH Key
+ssh_key_name   = "my-laptop-key"
+ssh_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA..."
+
+# Cloud-init user data (SSH key injected automatically via ssh_key_names)
 userdata = "#cloud-config\nusers:\n  - name: administrator\n    groups: sudo\n    shell: /bin/bash\n    lock_passwd: false\n    passwd: $2a$12$...\n"
 
 # Instance Specifications
@@ -137,15 +141,22 @@ Creates a virtual router with:
 - Custom IPv4 network (CIDR)
 - Network isolation
 
-### 3. Compute Instance (`cloudcix_compute_instance`)
+### 3. SSH Key (`cloudcix_compute_ssh_key`)
+Registers an SSH public key with CloudCIX. The key is automatically injected into the instance during provisioning via `ssh_key_names` in the instance metadata.
+
+### 4. Compute Instance (`cloudcix_compute_instance`)
 Creates a virtual machine with:
 - Custom CPU, RAM, and storage specifications
 - Network interface with NAT
 - Public and private IP addresses
 - Cloud-init userdata support
+- SSH key injection via registered key names
 
-### 4. Firewall (`cloudcix_network_firewall`)
+### 5. Firewall (`cloudcix_network_firewall`)
 Creates firewall rules to control inbound/outbound traffic.
+
+### 6. Storage Volume (`cloudcix_storage_volume`)
+Creates a Ceph network-attached storage volume and attaches it to the compute instance.
 
 ## Usage Examples
 
@@ -215,6 +226,10 @@ terraform destroy
 | `userdata` | string | Cloud-init configuration |
 | `instance_specs` | object | Instance specifications (CPU, RAM, storage, image) |
 | `firewall_rules` | list(string) | List of firewall rules |
+| `ssh_key_name` | string | Name to register the SSH key under in CloudCIX |
+| `ssh_public_key` | string | SSH public key to register (e.g. contents of `~/.ssh/id_ed25519.pub`) |
+| `storage_volume_name` | string | Name for the storage volume |
+| `storage_volume_specs` | object | Storage volume specifications (SKU and quantity in GB) |
 
 ### Optional Variables
 
@@ -222,6 +237,9 @@ terraform destroy
 |----------|------|---------|-------------|
 | `cloudcix_api_url` | string | "https://api.cloudcix.com/" | CloudCIX API base URL |
 | `cidr` | string | "10.10.10.0/24" | IPv4 CIDR for the private network |
+| `project_note` | string | "" | Optional description for the project |
+| `storage_volume_type` | string | "cephfs" | Storage type: `cephfs` or `cephrbd` |
+| `storage_volume_mount_path` | string | null | Mount path (cephfs only) |
 
 ### Instance Specifications Object
 
@@ -263,6 +281,8 @@ instance_specs = {
 | `public_ip` | Public IPv4 address of the instance |
 | `private_ip` | Private IPv4 address of the instance |
 | `private_subnet` | CIDR of the private network |
+| `ssh_key_id` | ID of the registered SSH key |
+| `storage_volume_id` | ID of the created storage volume |
 
 Access outputs with:
 ```bash
@@ -321,21 +341,23 @@ firewall_rules = [
 
 ### Cloud-init / Userdata
 
+SSH keys are injected automatically by the API via `ssh_key_names` in the instance metadata — no need to include them in the userdata. The registered key will be added to `ssh_authorized_keys` on first boot.
+
+If you are using an SSH key, `passwd` / `lock_passwd` / `ssh_pwauth` are optional — you can omit password auth entirely and rely solely on the key.
+
 Example cloud-config:
 ```yaml
 #cloud-config
 users:
-  - name: admin
+  - name: administrator
     groups: sudo
     shell: /bin/bash
-    sudo: ['ALL=(ALL) NOPASSWD:ALL']
-    ssh_authorized_keys:
-      - ssh-rsa AAAAB3NzaC1...
+    lock_passwd: false
+    passwd: <HASHED_PASSWORD>  # optional if using SSH key; generate with: openssl passwd -6 yourpassword
 
 packages:
   - curl
   - git
-  - htop
 
 runcmd:
   - echo "Setup complete"

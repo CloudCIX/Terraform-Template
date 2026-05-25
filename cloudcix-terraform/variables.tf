@@ -123,3 +123,13 @@ variable "project_note" {
   description = "Optional note to attach to the project"
   default     = ""
 }
+
+variable "ssh_key_name" {
+  type        = string
+  description = "Name for the SSH key record in CloudCIX"
+}
+
+variable "ssh_public_key" {
+  type        = string
+  description = "SSH public key to register with CloudCIX. The API injects it into the instance via ssh_key_names (e.g. contents of ~/.ssh/id_ed25519.pub)"
+}

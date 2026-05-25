@@ -72,6 +72,19 @@ instance_type = "virtual-machine"
 hypervisor_type = "lxd"
 
 # ----------------------------------------
+# SSH Key
+# ----------------------------------------
+
+# Name to register this key under in CloudCIX
+ssh_key_name = "my-laptop-key"
+
+# Your SSH public key — registered with CloudCIX and injected into the instance automatically
+# via ssh_key_names in the instance metadata (no cloud-init placeholder needed).
+# Generate a key with: ssh-keygen -t ed25519
+# Then paste the contents of ~/.ssh/id_ed25519.pub here.
+ssh_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA..."
+
+# ----------------------------------------
 # Cloud-init User Data
 # ----------------------------------------
 
@@ -82,11 +95,12 @@ hypervisor_type = "lxd"
 #   - Install packages
 #   - Run custom scripts
 # 
-# IMPORTANT: Replace the following placeholders:
-#   - <YOUR_HASHED_PASSWORD>: Generate with: `openssl passwd -6 password123`
-#   - <YOUR_SSH_KEY>: Your public SSH key (from ~/.ssh/id_ed25519.pub or similar)
+# SSH keys are injected automatically by the API via ssh_key_names — no placeholder needed here.
+# If you are using an SSH key, passwd/lock_passwd/ssh_pwauth are optional.
+# To disable password auth entirely, remove those fields and set lock_passwd: true.
 #
-# The example below creates an 'administrator' user with sudo access
+# If you want password auth too:
+#   - <YOUR_HASHED_PASSWORD>: Generate with: `openssl passwd -6 password123`
 userdata = <<-EOF
 #cloud-config
 users:
@@ -94,11 +108,10 @@ users:
     groups: sudo
     shell: /bin/bash
     lock_passwd: false
-    passwd: <YOUR_HASHED_PASSWORD>
-    ssh_authorized_keys: <YOUR_SSH_KEY>
+    passwd: <YOUR_HASHED_PASSWORD>  # optional if using SSH key
 chpasswd:
   expire: false
-ssh_pwauth: true
+ssh_pwauth: true  # optional if using SSH key
 EOF
 
 # ----------------------------------------

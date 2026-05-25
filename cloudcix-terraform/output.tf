@@ -26,3 +26,8 @@ output "private_ip" {
 output "storage_volume_id" {
   value = cloudcix_storage_volume.example_storage_volume.id
 }
+
+# SSH Key ID
+output "ssh_key_id" {
+  value = cloudcix_compute_ssh_key.instance_ssh_key.id
+}

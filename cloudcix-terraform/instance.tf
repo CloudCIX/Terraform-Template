@@ -7,6 +7,7 @@ resource "cloudcix_compute_instance" "compute_instance" {
     dns           = var.nameservers
     instance_type = var.instance_type
     userdata      = var.userdata
+    ssh_key_names = [cloudcix_compute_ssh_key.instance_ssh_key.name]
   }
   project_id = cloudcix_project.example_project.id
   specs = [{
